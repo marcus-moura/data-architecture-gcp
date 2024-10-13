@@ -95,12 +95,13 @@ class AnacWebScraper:
     Classe para realizar a extração de arquivo da Web.
     """
     @staticmethod
-    def extract_csv_links(url: str, year_filters: list = None) -> list:
+    def extract_csv_links(url: str, start_year: int, end_year: int) -> list:
         """
         Extrai os links para arquivos CSV de uma página web e os carrega no Google Cloud Storage para o path {INPUT_DIR}/{source}/{subdir_name}/{filename}
 
         :param url: URL da página web.
-        :param year_filters: Lista com filtros de ano para os arquivos (opcional), se não passado todos os arquivos serão buscados.
+        :param start_year: Ano de início para a extração dos arquivos.
+        :param end_year: Ano de final para a extração dos arquivos.
         :return: None
         """
         logger.info(f"Obtendo a lista de links dos arquivos...")
@@ -116,16 +117,14 @@ class AnacWebScraper:
             for link in links:
                 href = link.get('href', '')
                 if href.endswith('.csv'):
-
-                    if year_filters:
-                        if not any(filter in href.lower() for filter in year_filters):
-                            continue  # Ignorar o arquivo se o ano especificado não estiver no título
+                    file_year = int(href.split("_")[-1].split(".")[0])
                     
-                    csv_links.append(href)
-                    files_found = True
-            
+                    if file_year >= start_year and file_year <= end_year:
+                        csv_links.append(href)
+                        files_found = True
+                        
             if not files_found:
-                logger.warning(f"Não há arquivos para o(s) ano(s) filtrado(s): {year_filters}")
+                logger.warning(f"Não há arquivos entre os anos: {start_year} e {end_year}")
             return csv_links
         else:
             logger.error(f"Falha ao acessar a URL {url}. Status code: {response.status_code}")
@@ -283,36 +282,28 @@ class BigQueryLoader:
         except Exception as e:
             raise BigQueryLoaderError(f"Failed to insert data into BigQuery: {str(e)}")
     
-    @staticmethod
-    def _format_partition_date(partition_values: list) -> str:
-        """
-        Formata uma data/hora para o formato de data de partição do BigQuery.
 
-        :param partition_values: Lista de valores das partições, em anos, a serem deletadas.
-        :return: A data formatada no formato de data de partição do BigQuery (YYYY-MM-DD).
-        """
-        return ",".join([f"'{value}-01-01'" for value in partition_values])
-    
-    def delete_partition(self, dataset_id: str, table_id: str, partition_column: str, partition_values: list):
+    def delete_partition(self, dataset_id: str, table_id: str, partition_column: str, partition_start: int, partition_end: int):
         """
         Deleta a partição mais recente na tabela BigQuery.
 
         :param dataset_id: ID do conjunto de dados no BigQuery.
         :param table_id: ID da tabela no BigQuery.
         :param partition_column: Nome da coluna de partição.
-        :param partition_values: Lista de valores das partições, em anos, a serem deletadas.
+        :param partition_start: Anos de início da partição a ser deletadas.
+        :param partition_end: Anos final da partição a ser deletadas.
         """
-        partition_dates = self._format_partition_date(partition_values)
         table_ref = self._get_destination_table(dataset_id, table_id)
         try:
-            query = f"DELETE FROM `{table_ref}` WHERE {partition_column} in ({partition_dates})"
+            query = f"DELETE FROM `{table_ref}` WHERE {partition_column} >= {partition_start} AND {partition_column} <= {partition_end}"
             logger.info(f"Deletando partição com a query: {query}")
             
             job = self.client.query(query)
             
             job = job.result() # Espera até que a consulta seja concluída
-            logger.info(f"Partições {partition_values} deletadas com sucesso na tabela '{table_id}'. Total de {job.num_dml_affected_rows} linhas removidas.")
+            logger.info(f"Partições deletadas com sucesso na tabela '{table_id}'. Total de {job.num_dml_affected_rows} linhas removidas.")
         except NotFound:
             logger.warning(f"A partição não deletada! Tabela: {table_id} não foi encontrada.")
         except Exception as e:
             logger.warning(f"Não foi possível deletar a partição: {e}.")
+            

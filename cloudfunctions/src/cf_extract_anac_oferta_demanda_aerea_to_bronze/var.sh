@@ -15,7 +15,7 @@ export ENTRY_POINT="main"
 # Número de CPUs atribuídas à função
 export CPU="583m"
 # Quantidade de memória atribuída à função (por exemplo, "1Gi" para 1 gigabyte)
-export MEMORY="512MB"
+export MEMORY="1Gi"
 # Tempo limite máximo de execução da função em segundos
 export TIMEOUT="1200s"
 # Número máximo de instâncias da função que podem ser executadas simultaneamente

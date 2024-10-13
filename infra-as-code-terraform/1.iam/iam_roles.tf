@@ -45,7 +45,7 @@ resource "google_project_iam_member" "attach_roles_default_sa_dataform" {
 resource "google_project_iam_member" "attach_roles_sa_github" {
   for_each = toset(["roles/bigquery.admin","roles/cloudfunctions.developer","roles/run.admin", 
                     "roles/storage.admin","roles/iam.serviceAccountAdmin",
-                    "roles/composer.environmentAndStorageObjectAdmin",
+                    "roles/iam.serviceAccountUser", "roles/composer.environmentAndStorageObjectAdmin",
                     "roles/serviceusage.serviceUsageAdmin","roles/resourcemanager.projectIamAdmin"])
   project = var.project_id
   role  = each.key

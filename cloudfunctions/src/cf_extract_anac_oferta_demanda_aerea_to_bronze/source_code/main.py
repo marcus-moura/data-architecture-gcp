@@ -31,24 +31,31 @@ def main(request=None):
     extract_config = config["extract"]
     bq_config = config["bigquery"]
 
+    dataset_id = bq_config['dataset_id']
+    table_id = bq_config['table_id']
+    
     # Instanciação das classes
     web_scraper = AnacWebScraper()
     cloud_storage = CloudStorage(bucket_target=bucket_name)
     transformer = DataTransformer()
     bigquery = BigQueryLoader(project_id, location)
 
+    # Construção de filtros
+    current_year = datetime.now().strftime("%Y")
+    start_year = 2010
+    end_year = current_year
+    
     # Verifica se a tabela já existe no BigQuery para decidir entre carga incremental ou completa
-    if bigquery.table_exists(bq_config['dataset_id'], bq_config['table_id']): 
-        current_year = datetime.now().strftime("%Y")
-        year_filters = [current_year]
-        logger.info(f"Iniciando o processo de carga incremental com filtro {year_filters}.")
+    if bigquery.table_exists(dataset_id, table_id): 
+        start_year = current_year
+        end_year = current_year
+        logger.info(f"Iniciando o processo de carga incremental com filtro entre os anos {start_year} e {end_year}.")
     else:
         # Se a tabela não existir, realiza uma carga completa
-        logger.info("Iniciando o processo de carga completa.")
-        year_filters = []
-    
+        logger.info(f"Iniciando o processo de carga completa com ano de início: {start_year}")
+        
     # Extrai os links para os arquivos CSV da página da web
-    csv_links = web_scraper.extract_csv_links(url=extract_config['url'], year_filters=year_filters)
+    csv_links = web_scraper.extract_csv_links(url=extract_config['url'], start_year=start_year, end_year=end_year)
     for csv_link in csv_links:
         cloud_storage.download_file_to_gcs(csv_link, source=extract_config['source'], subdir_name=extract_config['subdir_name'])
 
@@ -57,9 +64,15 @@ def main(request=None):
         logger.warning("Nenhum arquivo encontrado para processar. O pipeline será encerrado!!")
         return
     
-    if year_filters:
+    if start_year and end_year:
         # Deleta a partição de acordo com o filtro de ano
-        bigquery.delete_partition(bq_config['dataset_id'], bq_config['table_id'], bq_config['partition_field'], partition_values=year_filters)
+        bigquery.delete_partition(
+                    dataset_id, 
+                    table_id, 
+                    bq_config['partition_field'], 
+                    partition_start=start_year,
+                    partition_end=end_year
+        )
 
     for blob in blobs:
         # Transformação dos dados
