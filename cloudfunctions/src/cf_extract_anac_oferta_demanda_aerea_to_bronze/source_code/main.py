@@ -41,7 +41,7 @@ def main(request=None):
     bigquery = BigQueryLoader(project_id, location)
 
     # Construção de filtros
-    current_year = datetime.now().strftime("%Y")
+    current_year = int(datetime.now().strftime("%Y"))
     start_year = 2010 # Inicio da carga histórica para a primeira carga da tabela.
     end_year = current_year
     
