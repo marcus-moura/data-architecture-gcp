@@ -70,8 +70,8 @@ def main(request=None):
                     dataset_id, 
                     table_id, 
                     bq_config['partition_field'], 
-                    partition_start=start_year,
-                    partition_end=end_year
+                    partition_start=f'{start_year}-01-01',
+                    partition_end=f'{end_year}-01-01'
         )
 
     for blob in blobs:

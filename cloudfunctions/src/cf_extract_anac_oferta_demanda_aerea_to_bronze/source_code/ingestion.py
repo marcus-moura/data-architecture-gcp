@@ -165,12 +165,12 @@ class DataTransformer:
                 df.columns = [self._clean_and_normalize_text(column) for column in df.columns]
                 
                 # Converte todas as colunas para string
-                # df = self._parse_df_to_str_nan(df)
+                df = self._parse_df_to_str_nan(df)
                 
                 # Converte a coluna 'ano' para uma string
-                df['ano'] = df['ano'].astype(str)
+                # df['ano'] = df['ano'].astype(str)
                 # Adiciona um prefixo '01-01-' para representar o primeiro dia do ano
-                df['ano_particao'] = df['ano'] + '-01-01' 
+                df['ano_particao'] = df['ano'] + '-01-01'
                 # Converte a coluna 'ano_particao' para o tipo de dados de data
                 df['ano_particao'] = pd.to_datetime(df['ano_particao'], format='%Y-%d-%m').dt.date
                 
@@ -283,7 +283,7 @@ class BigQueryLoader:
             raise BigQueryLoaderError(f"Failed to insert data into BigQuery: {str(e)}")
     
 
-    def delete_partition(self, dataset_id: str, table_id: str, partition_column: str, partition_start: int, partition_end: int):
+    def delete_partition(self, dataset_id: str, table_id: str, partition_column: str, partition_start: str, partition_end: str):
         """
         Deleta a partição mais recente na tabela BigQuery.
 
@@ -295,7 +295,7 @@ class BigQueryLoader:
         """
         table_ref = self._get_destination_table(dataset_id, table_id)
         try:
-            query = f"DELETE FROM `{table_ref}` WHERE {partition_column} >= {partition_start} AND {partition_column} <= {partition_end}"
+            query = f"DELETE FROM `{table_ref}` WHERE {partition_column} >= '{partition_start}' AND {partition_column} <= '{partition_end}'"
             logger.info(f"Deletando partição com a query: {query}")
             
             job = self.client.query(query)
