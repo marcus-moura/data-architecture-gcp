@@ -5,7 +5,7 @@ on:
     branches: 
       - main
     paths:
-      - "infra-as-code-terraform/bigquery/**"
+      - "infra-as-code-terraform/3.bigquery/**"
       - .github/workflows/ci-deploy-terraform-bigquery.yml
       
   # Allows you to run this workflow manually from the Actions tab
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "infra-as-code-terraform/bigquery"
+        working-directory: "infra-as-code-terraform/3.bigquery"
 
     permissions:
       contents: read

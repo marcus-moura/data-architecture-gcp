@@ -5,7 +5,7 @@ on:
     branches: 
       - main
     paths:
-      - "infra-as-code-terraform/cloud_storage/**"
+      - "infra-as-code-terraform/2.cloud_storage/**"
       - .github/workflows/ci-deploy-terraform-cloud-storage.yml
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "infra-as-code-terraform/cloud_storage"
+        working-directory: "infra-as-code-terraform/2.cloud_storage"
 
     permissions:
       contents: read

@@ -6,8 +6,8 @@ on:
     branches: 
       - main
     paths:
-      - "infra-as-code-terraform/iam/**"
-      - .github/workflows/ci-deploy-terraform-iam.yml
+      - "infra-as-code-terraform/1.iam/**"
+      - .github/workflows/ci-deploy-terraform-i1.am.yml
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "infra-as-code-terraform/iam"
+        working-directory: "infra-as-code-terraform/1.iam"
 
     permissions:
       contents: read

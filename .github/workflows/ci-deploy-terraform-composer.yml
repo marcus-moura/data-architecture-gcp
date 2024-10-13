@@ -5,7 +5,7 @@ on:
     branches: 
       - main
     paths:
-      - "infra-as-code-terraform/composer/**"
+      - "infra-as-code-terraform/4.composer/**"
       - .github/workflows/ci-deploy-terraform-composer.yml
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "infra-as-code-terraform/composer"
+        working-directory: "infra-as-code-terraform/4.composer"
 
     permissions:
       contents: read
