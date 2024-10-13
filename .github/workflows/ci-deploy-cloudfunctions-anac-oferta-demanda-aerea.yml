@@ -14,9 +14,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: cloudfunctions/src/cf_extract_anac_oferta_demanda_aerea_to_bronze
+ 
     steps:
       - name: Set up Cloud SDK
         uses: 'google-github-actions/auth@v2'
@@ -25,5 +23,6 @@ jobs:
 
       - name: Deploy to Cloud Functions
         run: |
-          . var.sh
-          sh deploy.sh
+          cd cloudfunctions/src
+          . cf_extract_anac_oferta_demanda_aerea_to_bronze/var.sh
+          sh cf_extract_anac_oferta_demanda_aerea_to_bronze/deploy.sh

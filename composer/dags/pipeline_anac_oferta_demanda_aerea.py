@@ -17,9 +17,9 @@ LOCATION = os.getenv("LOCATION")
 
 # Cloudfunctions parameters
 URL_BASE_CF = os.getenv("URL_BASE_GCF")
-CF_NAME = "cf_extract_anac_oferta_demanda_aerea_to_bronze"
-ENDPOINT_CF = CF_NAME #f"{URL_BASE_CF}/{CF_NAME}"
-TOKEN_CF = fetch_id_token(Request(), ENDPOINT_CF)
+ENDPOINT = "cf_extract_anac_oferta_demanda_aerea_to_bronze"
+URL_FULL = f"{URL_BASE_CF}/{ENDPOINT}"
+TOKEN_CF = fetch_id_token(Request(), URL_FULL)
 
 # Dataform parameters
 DATAFORM_REPO_ID = "tcc-repository-dataform"
@@ -53,7 +53,7 @@ def pipeline_anac():
         task_display_name="CF - Extract Load To Bronze",
         method="POST",
         http_conn_id="cf_conn_id",
-        endpoint=ENDPOINT_CF,
+        endpoint=ENDPOINT,
         headers={'Authorization': f"Bearer {TOKEN_CF}", "Content-Type": "application/json"}
     )
     
