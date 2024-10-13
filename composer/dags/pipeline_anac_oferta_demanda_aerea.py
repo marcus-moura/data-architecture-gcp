@@ -18,7 +18,7 @@ LOCATION = os.getenv("LOCATION")
 # Cloudfunctions parameters
 URL_BASE_CF = os.getenv("URL_BASE_GCF")
 CF_NAME = "cf_extract_anac_oferta_demanda_aerea_to_bronze"
-ENDPOINT_CF = f"{URL_BASE_CF}/{CF_NAME}"
+ENDPOINT_CF = CF_NAME #f"{URL_BASE_CF}/{CF_NAME}"
 TOKEN_CF = fetch_id_token(Request(), ENDPOINT_CF)
 
 # Dataform parameters

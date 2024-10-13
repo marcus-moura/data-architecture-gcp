@@ -18,13 +18,12 @@ jobs:
       run:
         working-directory: cloudfunctions/src/cf_extract_anac_oferta_demanda_aerea_to_bronze
     steps:
-      - name: Set up Cloud SDK for Prod
+      - name: Set up Cloud SDK
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Deploy to Cloud Functions
         run: |
-          chmod +x var.sh
           . var.sh
           sh deploy.sh
