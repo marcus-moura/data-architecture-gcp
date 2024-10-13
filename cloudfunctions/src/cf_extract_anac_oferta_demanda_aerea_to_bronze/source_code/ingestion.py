@@ -168,7 +168,7 @@ class DataTransformer:
                 df = self._parse_df_to_str_nan(df)
                 
                 # Adiciona um prefixo '01-01-' para representar o primeiro dia do ano
-                df['ano_particao'] = df['ano'] + '-01-01'
+                df['ano_particao'] = df['ANO'] + '-01-01'
                 # Converte a coluna 'ano_particao' para o tipo de dados de data
                 df['ano_particao'] = pd.to_datetime(df['ano_particao'], format='%Y-%d-%m').dt.date
                 
