@@ -9,6 +9,7 @@ bigquery:
   write_disposition: WRITE_APPEND
   time_partitioning: year
   partition_field: ano_particao
+  schema_relax: True
   description: |
     Tabela para armazenar dados extraídos da ANAC sobre dados estatísticos de oferta e demanda aérea.
 

@@ -137,7 +137,7 @@ class DataTransformer:
         """
         Limpa e normaliza o texto removendo caracteres especiais e substituindo por '_'.
         """
-        return unidecode.unidecode(re.sub(r'[-/\s(\)]+', '_', text)).lower()
+        return unidecode.unidecode(re.sub(r'[-/\s(\)]+', '_', text))
     
     @staticmethod
     def _parse_df_to_str_nan(df: pd.DataFrame) -> pd.DataFrame:
@@ -167,8 +167,6 @@ class DataTransformer:
                 # Converte todas as colunas para string
                 df = self._parse_df_to_str_nan(df)
                 
-                # Converte a coluna 'ano' para uma string
-                # df['ano'] = df['ano'].astype(str)
                 # Adiciona um prefixo '01-01-' para representar o primeiro dia do ano
                 df['ano_particao'] = df['ano'] + '-01-01'
                 # Converte a coluna 'ano_particao' para o tipo de dados de data
