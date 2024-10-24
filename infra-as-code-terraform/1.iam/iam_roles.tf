@@ -25,7 +25,7 @@ resource "google_project_iam_member" "attach_roles_sa_composer" {
 
 # Attach role in service account dataform
 resource "google_project_iam_member" "attach_roles_sa_dataform" {
-  for_each = toset(["roles/bigquery.dataEditor", "roles/secretmanager.secretAccessor","roles/bigquery.jobUser"])
+  for_each = toset(["roles/bigquery.dataEditor","roles/bigquery.jobUser"])
   project = var.project_id
   role  = each.key
   member  = "serviceAccount:${local.sa_prefix}-${local.sa_composer}@${var.project_id}.iam.gserviceaccount.com"
