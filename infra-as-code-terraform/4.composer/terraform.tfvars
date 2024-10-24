@@ -13,6 +13,9 @@ airflow_config_overrides    = {
                                 worker_concurrency                 = "6"
                                 worker_autoscale                   = "6,2"
                             }
+pypi_packages               = {
+                                soda-core-bigquery = ""
+                            }
 environment_size            = "ENVIRONMENT_SIZE_SMALL"
 scheduler_config            = {
                                 cpu        = 0.5

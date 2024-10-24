@@ -32,6 +32,7 @@ module "composer_instance" {
   worker_config               = var.worker_config
   triggerer_config            = var.triggerer_config
   airflow_config_overrides    = var.airflow_config_overrides
+  pypi_packages               = var.pypi_packages
   env_variables               = {
           PROJECT                       = var.project_id
           LOCATION                      = var.location

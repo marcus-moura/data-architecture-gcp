@@ -77,6 +77,12 @@ variable "airflow_config_overrides" {
   }
 }
 
+variable "pypi_packages" {
+  description = "Pacotes python"
+  type = map(string)
+  nullable = true
+}
+
 variable "environment_size" {
   type        = string
   description = "Tamanho do ambiente composer"

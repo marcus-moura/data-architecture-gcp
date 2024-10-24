@@ -33,7 +33,10 @@ resource "google_composer_environment" "cluster_config_composer" {
             secrets-backend_kwargs            =  jsonencode({"project_id":"${var.project_id}","connections_prefix":"sm", "variables_prefix":"sm", "sep":"_"})
         }
 
+        pypi_packages = var.pypi_packages
+
         env_variables = var.env_variables
+
         cloud_data_lineage_integration {
             enabled  = var.dataplex_data_lineage
         }

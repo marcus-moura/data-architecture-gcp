@@ -56,6 +56,12 @@ variable "airflow_config_overrides" {
   })
 }
 
+variable "pypi_packages" {
+  description = "Pacotes python"
+  type = map(string)
+  nullable = true
+}
+
 variable "env_variables" {
   type        = map(string)
   description = "Dicionário com as váriaveis de ambiente"
