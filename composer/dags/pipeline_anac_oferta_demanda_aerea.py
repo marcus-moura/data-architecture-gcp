@@ -1,4 +1,4 @@
-from airflow.decorators import dag
+from airflow.decorators import dag, task
 from airflow.utils.task_group import TaskGroup
 from airflow.providers.google.cloud.operators.dataform import (
     DataformCreateWorkflowInvocationOperator, 
@@ -48,7 +48,8 @@ def pipeline_anac():
 
     start = EmptyOperator(task_id="start", task_display_name="Start 🏁")
     
-    cf_run_extract = HttpOperator(
+    # Chama a Cloud Functions que extrai os dados e faz o carregamento na camada bronze do BigQuery
+    cf_extract_load_bronze = HttpOperator(
         task_id="cf_extract_load_to_bronze",
         task_display_name="CF - Extract Load To Bronze",
         method="POST",
@@ -57,6 +58,13 @@ def pipeline_anac():
         headers={'Authorization': f"Bearer {TOKEN_CF}", "Content-Type": "application/json"}
     )
     
+    # Inicia um ambiente virtual Python e executa a checagem de qualidade na tabela bronze
+    @task(task_display_name="Soda Check Bronze")
+    def soda_check_bronze(data_source='bigquery_soda_bronze', checks_subpath='bronze', scan_name='anac_oferta_demanda_aerea'): 
+        from soda.scan_operations import run_soda_scan
+        return run_soda_scan(data_source, scan_name, checks_subpath)
+    
+    # Compila o repositório do Dataform
     df_compilation_repo = DataformCreateCompilationResultOperator(
         task_id=f"df_compilation_repository",
         task_display_name="DF - Compilation Repository",
@@ -68,7 +76,7 @@ def pipeline_anac():
             "code_compilation_config": {"default_database": PROJECT_ID},
         }
     )
-    
+    # Cria a tabela silver
     df_transform_silver = DataformCreateWorkflowInvocationOperator(
         task_id="df_transform_bronze_to_silver",
         task_display_name="DF - Transform Bronze To Silver",
@@ -88,6 +96,6 @@ def pipeline_anac():
     
     finish = EmptyOperator(task_id="finish", task_display_name="Finish 🏆")
     
-    start >> cf_run_extract >> df_compilation_repo >> df_transform_silver >> finish
+    start >> cf_extract_load_bronze >> soda_check_bronze() >> df_compilation_repo >> df_transform_silver >> finish
     
 pipeline_anac()

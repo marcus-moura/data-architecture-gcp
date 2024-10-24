@@ -1,0 +1,68 @@
+checks for anac_oferta_demanda_aerea:
+  # Check fails when OrderID, CustomerID, EmployeeID is missing, OR
+  # when the data type of those columns is other than specified
+    - schema:
+        fail:
+            # when required column missing: [EMPRESA_SIGLA_, CustomerID, EmployeeID]
+            when wrong column type:
+                EMPRESA_SIGLA_: string
+                EMPRESA_NOME_: string
+                EMPRESA_NACIONALIDADE_: string
+                ANO: string
+                MES: string
+                AEROPORTO_DE_ORIGEM_SIGLA_: string
+                AEROPORTO_DE_ORIGEM_NOME_: string
+                AEROPORTO_DE_ORIGEM_UF_: string
+                AEROPORTO_DE_ORIGEM_REGIAO_: string
+                AEROPORTO_DE_ORIGEM_PAIS_: string
+                AEROPORTO_DE_ORIGEM_CONTINENTE_: string
+                AEROPORTO_DE_DESTINO_SIGLA_: string
+                AEROPORTO_DE_DESTINO_NOME_: string
+                AEROPORTO_DE_DESTINO_UF_: string
+                AEROPORTO_DE_DESTINO_REGIAO_: string
+                AEROPORTO_DE_DESTINO_PAIS_: string
+                AEROPORTO_DE_DESTINO_CONTINENTE_: string
+                NATUREZA: string
+                GRUPO_DE_VOO: string
+                PASSAGEIROS_PAGOS: string
+                PASSAGEIROS_GRATIS: string
+                CARGA_PAGA_KG_: string
+                CARGA_GRATIS_KG_: string
+                CORREIO_KG_: string
+                ASK: string
+                RPK: string
+                ATK: string
+                RTK: string
+                COMBUSTIVEL_LITROS_: string
+                DISTANCIA_VOADA_KM_: string
+                DECOLAGENS: string
+                CARGA_PAGA_KM: string
+                CARGA_GRATIS_KM: string
+                CORREIO_KM: string
+                ASSENTOS: string
+                PAYLOAD: string
+                HORAS_VOADAS: string
+                BAGAGEM_KG_: string
+                ano_particao: date
+                data_ingestao: date
+                nome_arquivo: string
+
+    # # Check fails when any NULL values exist in the column OrderID
+    # - missing_count(OrderID) = 0:
+    #     name: All orders have a key
+    # # Check fails when any NULL values exist in the column CustomerID
+    # - missing_count(CustomerID) = 0:
+    #     name: All orders have customer associated
+    # # Check fails when any NULL values exist in the column EmployeeID
+    # - missing_count(EmployeeID) = 0:
+    #     name: All orders have a employee associated
+    # # Warning when NULL values are > 0 in the column ShipPostalCode
+    # - missing_count(ShipPostalCode):
+    #     warn: when > 30
+
+    # # Check fails when any order contains no items 
+    # - min(Freight) > 0:
+    #     name: All sales have a Freight non-zero
+    
+    - row_count > 0:
+        name: Total dever ser maior que 0

@@ -1,0 +1,21 @@
+# Service Account Key authentication method
+# See Authentication methods below for more config options
+data_source bigquery_soda_bronze:
+  type: bigquery
+  use_context_auth: True
+  auth_scopes:
+  - https://www.googleapis.com/auth/bigquery
+  - https://www.googleapis.com/auth/cloud-platform
+  - https://www.googleapis.com/auth/drive
+  project_id: ${PROJECT}
+  dataset: tcc_bronze
+
+data_source bigquery_soda_silver:
+  type: bigquery
+  use_context_auth: True
+  auth_scopes:
+  - https://www.googleapis.com/auth/bigquery
+  - https://www.googleapis.com/auth/cloud-platform
+  - https://www.googleapis.com/auth/drive
+  project_id: ${PROJECT}
+  dataset: tcc_silver
