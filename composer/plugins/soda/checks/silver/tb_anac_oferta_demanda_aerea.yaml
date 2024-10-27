@@ -1,45 +1,65 @@
-checks for trusted_orders:
-    # Check fails when order_id, customer_id, employee_id, order_delivery_postal_code
+checks for tb_anac_oferta_demanda_aerea:
+    # Check fails when empresa_sigla, empresa_nome, data_registro
     # is missing, OR
     # when the data type of those columns is other than specified
     - schema:
         fail:
-            when required column missing: [order_id, customer_id, employee_id, order_delivery_postal_code]
+            when required column missing: [hash_key]
             when wrong column type:
-                order_id: integer
-                customer_id: string
-                employee_id: integer
-                order_reference_month: timestamp
-                shipped_date: timestamp
-                cost_freight: float64
-                ship_date: string
-                order_delivery_address: string
-                order_delivery_number: integer
-                order_delivery_city: string
-                order_delivery_region: string
-                order_delivery_postal_code: string
-                order_delivery_country: string
+                hash_key: bytes
+                empresa_sigla: string
+                empresa_nome: string
+                empresa_nacionalidade: string
+                data_registro: date
+                aeroporto_origem_sigla: string
+                aeroporto_origem_nome: string
+                aeroporto_origem_uf: string
+                aeroporto_origem_pais: string
+                aeroporto_destino_sigla: string
+                aeroporto_destino_nome: string
+                aeroporto_destino_uf: string
+                aeroporto_destino_pais: string
+                natureza_voo: string
+                tipo_voo: string
+                passageiros_pagos: integer
+                passageiros_gratis: integer
+                carga_paga_kg: float64
+                carga_gratis_kg: float64
+                correio_kg: float64
+                ask_assentos_ofercidos_km: float64
+                rpk_passageiros_transportados_km: float64
+                atk_toneladas_ofercidas_km: float64
+                rtk_toneladas_transportadas_km: float64
+                combustivel_litros: float64
+                distancia_voada_km: float64
+                decolagens: integer
+                carga_paga_km: float64
+                carga_gratis_km: float64
+                correio_km: float64
+                assentos: integer
+                capacidade_total_aeronave_kg: float64
+                horas_voadas: float64
+                bagagem_kg: float64
+                ano_particao: date
 
     # Check fails when any NULL values exist in the column
-    - missing_count(order_id) = 0:
-        name: All orders have a key
+    - missing_count(aeroporto_origem_sigla):
+        name: aeroporto origem sigla não deve conter valores nulos
+        warn: when >= 1
     
-    - duplicate_count(order_id) = 0:
-        name: Every order ID must be unique
-
-    # Check fails when any NULL values exist in the column
-    - missing_count(customer_id) = 0:
-        name: All orders have a customers associated
-    # Check fails when any NULL values exist in the column
-    - missing_count(employee_id):
-        name: All orders have a employee_id associated
+    - missing_count(aeroporto_origem_pais):
+        name: aeroporto origem sigla não deve conter valores nulos
         warn: when >= 1
 
-    # Check fails when any cost_freight is less than or equal to zero
-    - min(cost_freight) > 0:
-        name: All Freight have a non-zero order quantity
+    - duplicate_count(hash_key) = 0:
+        name: Hash key deve ser unico
 
-    - invalid_count(order_delivery_postal_code) = 0:
-        valid regex: ^\d{5}-\d{3}$
-        name: All postal_code have pattern 5-3 digits
-    
+    - row_count > 0:
+        name: Total dever ser maior que 0
+
+    # - failed rows:
+    #     name: Coluna natureza_voo deve conter apenas valores "INTERNACIONAL" e "DOMÉSTICA".
+    #     fail query: |
+    #         SELECT DISTINCT natureza_voo
+    #         FROM tb_anac_oferta_demanda_aerea
+    #         WHERE natureza_voo IN ("INTERNACIONAL","DOMÉSTICA", "TESTE")

@@ -46,23 +46,6 @@ checks for anac_oferta_demanda_aerea:
                 ano_particao: date
                 data_ingestao: date
                 nome_arquivo: string
-
-    # # Check fails when any NULL values exist in the column OrderID
-    # - missing_count(OrderID) = 0:
-    #     name: All orders have a key
-    # # Check fails when any NULL values exist in the column CustomerID
-    # - missing_count(CustomerID) = 0:
-    #     name: All orders have customer associated
-    # # Check fails when any NULL values exist in the column EmployeeID
-    # - missing_count(EmployeeID) = 0:
-    #     name: All orders have a employee associated
-    # # Warning when NULL values are > 0 in the column ShipPostalCode
-    # - missing_count(ShipPostalCode):
-    #     warn: when > 30
-
-    # # Check fails when any order contains no items 
-    # - min(Freight) > 0:
-    #     name: All sales have a Freight non-zero
     
     - row_count > 0:
         name: Total dever ser maior que 0

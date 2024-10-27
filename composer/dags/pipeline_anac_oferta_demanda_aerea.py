@@ -1,5 +1,6 @@
 from airflow.decorators import dag, task
 from airflow.utils.task_group import TaskGroup
+from airflow.models.baseoperator import chain
 from airflow.providers.google.cloud.operators.dataform import (
     DataformCreateWorkflowInvocationOperator, 
     DataformCreateCompilationResultOperator
@@ -94,8 +95,60 @@ def pipeline_anac():
         },
     )
     
+    # Inicia um ambiente virtual Python e executa a checagem de qualidade na tabela silver
+    @task(task_display_name="Soda Check Silver")
+    def soda_check_silver(data_source='bigquery_soda_silver', checks_subpath='silver', scan_name='tb_anac_oferta_demanda_aerea'): 
+        from soda.scan_operations import run_soda_scan
+        return run_soda_scan(data_source, scan_name, checks_subpath)
+    
+    # Cria a tabela gold analise_passageiros_voos
+    df_gold_passageiro = DataformCreateWorkflowInvocationOperator(
+        task_id="df_gold_analise_passageiro",
+        task_display_name="DF - Gold Analise Passageiro",
+        project_id=PROJECT_ID,
+        region=LOCATION,
+        repository_id=DATAFORM_REPO_ID,
+        workflow_invocation={
+            "compilation_result": "{{ task_instance.xcom_pull('df_compilation_repository')['name'] }}",
+            "invocation_config": {
+                "included_targets": [{"database": PROJECT_ID, "name": "analise_passageiros_voos", "schema": DATASET_GOLD}],
+                "transitive_dependencies_included": False,
+                "transitive_dependents_included": False,
+                "fully_refresh_incremental_tables_enabled": False
+            },
+        },
+    )
+    
+    # Cria a tabela gold analise_voos
+    df_gold_voos = DataformCreateWorkflowInvocationOperator(
+        task_id="df_gold_analise_voos",
+        task_display_name="DF - Gold Analise Voos",
+        project_id=PROJECT_ID,
+        region=LOCATION,
+        repository_id=DATAFORM_REPO_ID,
+        workflow_invocation={
+            "compilation_result": "{{ task_instance.xcom_pull('df_compilation_repository')['name'] }}",
+            "invocation_config": {
+                "included_targets": [{"database": PROJECT_ID, "name": "analise_voos", "schema": DATASET_GOLD}],
+                "transitive_dependencies_included": False,
+                "transitive_dependents_included": False,
+                "fully_refresh_incremental_tables_enabled": False
+            },
+        },
+    )
+    
     finish = EmptyOperator(task_id="finish", task_display_name="Finish 🏆")
     
-    start >> cf_extract_load_bronze >> soda_check_bronze() >> df_compilation_repo >> df_transform_silver >> finish
-    
+    # Define a dependência das tasks
+    chain(
+          start,
+          cf_extract_load_bronze,
+          soda_check_bronze(),
+          df_compilation_repo,
+          df_transform_silver,
+          soda_check_silver(),
+          [df_gold_passageiro,df_gold_voos],
+          finish
+    )
+
 pipeline_anac()
