@@ -1,5 +1,5 @@
 checks for tb_anac_oferta_demanda_aerea:
-    # Check fails when empresa_sigla, empresa_nome, data_registro
+    # Check fails when hash_key
     # is missing, OR
     # when the data type of those columns is other than specified
     - schema:
@@ -42,24 +42,32 @@ checks for tb_anac_oferta_demanda_aerea:
                 bagagem_kg: float64
                 ano_particao: date
 
-    # Check fails when any NULL values exist in the column
     - missing_count(aeroporto_origem_sigla):
         name: aeroporto origem sigla não deve conter valores nulos
         warn: when >= 1
     
     - missing_count(aeroporto_origem_pais):
-        name: aeroporto origem sigla não deve conter valores nulos
+        name: aeroporto origem pais não deve conter valores nulos
         warn: when >= 1
 
     - duplicate_count(hash_key) = 0:
-        name: Hash key deve ser unico
+        name: As linhas devem ser unicas
+    
+    - invalid_count(passageiros_pagos) = 0:
+        name: Coluna passageiros_pagos deve ser maior ou igual a 1
+        valid min: 1
+    
+    - invalid_count(decolagens) = 0:
+        name: Coluna decolagens deve ser maior ou igual a 1
+        valid min: 1
+
+    - invalid_count(tipo_voo) = 0:
+        name: Coluna tipo_voo só deve conter os valores - IMPRODUTIVO, NÃO REGULAR, REGULAR
+        valid values: [IMPRODUTIVO, NÃO REGULAR, REGULAR]
+    
+    - invalid_count(natureza_voo) = 0:
+        name: Coluna natureza_voo só deve conter os valores abaixo - INTERNACIONAL, DOMÉSTICA
+        valid values: [INTERNACIONAL, DOMÉSTICA]
 
     - row_count > 0:
         name: Total dever ser maior que 0
-
-    # - failed rows:
-    #     name: Coluna natureza_voo deve conter apenas valores "INTERNACIONAL" e "DOMÉSTICA".
-    #     fail query: |
-    #         SELECT DISTINCT natureza_voo
-    #         FROM tb_anac_oferta_demanda_aerea
-    #         WHERE natureza_voo IN ("INTERNACIONAL","DOMÉSTICA", "TESTE")

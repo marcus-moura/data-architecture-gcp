@@ -1,9 +1,7 @@
 checks for anac_oferta_demanda_aerea:
-  # Check fails when OrderID, CustomerID, EmployeeID is missing, OR
   # when the data type of those columns is other than specified
     - schema:
         fail:
-            # when required column missing: [EMPRESA_SIGLA_, CustomerID, EmployeeID]
             when wrong column type:
                 EMPRESA_SIGLA_: string
                 EMPRESA_NOME_: string
