@@ -42,7 +42,7 @@ def main(request=None):
 
     # Construção de filtros
     current_year = int(datetime.now().strftime("%Y"))
-    start_year = 2010 # Inicio da carga histórica para a primeira carga da tabela.
+    start_year = 2018 # Inicio da carga histórica para a primeira carga da tabela.
     end_year = current_year
     
     # Verifica se a tabela já existe no BigQuery para decidir entre carga incremental ou completa
