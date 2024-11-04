@@ -41,20 +41,20 @@ def main(request=None):
     transformer = DataTransformer()
     bigquery = BigQueryLoader(project_id, location)
 
-    start_date = extract_config['start_date'] # Inicio da carga histórica para a primeira carga da tabela.
+    filter_date = datetime.strptime(extract_config['start_date'], '%Y-%m-%d').date() # Inicio da carga histórica para a primeira carga da tabela.
     
     last_date_update = bigquery.get_last_update_table(dataset_id, table_id, partition_field)
     if last_date_update:
-        start_date = last_date_update
-        logger.info(f"Iniciando o processo de carga incremental com filtro: {start_date}.")
+        filter_date = last_date_update
+        logger.info(f"Iniciando o processo de carga incremental com filtro: {filter_date}.")
     else:
         # Se a tabela não existir, realiza uma carga completa
-        logger.info(f"Iniciando o processo de carga completa com data de início: {start_date}")
+        logger.info(f"Iniciando o processo de carga completa com data de início: {filter_date}")
     
     # Extrai os links para os arquivos CSV da página da web
     file_links = web_scraper.extract_file_links(
                     url=extract_config['url'],
-                    filter_date=start_date,
+                    filter_date=filter_date,
                     file_format=extract_config['file_format_link'],
                     filter_file=extract_config['filter_file']
                 )
@@ -69,13 +69,13 @@ def main(request=None):
         logger.warning("Nenhum arquivo encontrado para processar. O pipeline será encerrado!!")
         return
 
-    # Deleta a partição de acordo com o filtro de start_date para evitar duplicidade
+    # Deleta a partição de acordo com o filtro de filter_date para evitar duplicidade
     bigquery.delete_partition(
                 dataset_id=dataset_id, 
                 table_id=table_id, 
                 partition_column=partition_field, 
-                partition_start=start_date,
-                partition_end=start_date
+                partition_start=filter_date,
+                partition_end=filter_date
     )
 
     for blob in blobs:
@@ -95,5 +95,3 @@ def main(request=None):
         logger.success(f"Arquivo {blob.name} movido com sucesso!")
         
     return "Ingestão concluída com sucesso!!"
-
-main()

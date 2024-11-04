@@ -112,7 +112,7 @@ class AnacWebScraper:
     Classe para realizar a extração de arquivo da Web.
     """
     @staticmethod
-    def extract_file_links(url: str, filter_date: str, filter_file: str, file_format: str) -> list:
+    def extract_file_links(url: str, filter_date: datetime.date, filter_file: str, file_format: str) -> list:
         """
         Extrai os links para arquivos CSV de uma página web e os carrega no Google Cloud Storage para o path {INPUT_DIR}/{source}/{subdir_name}/{filename}
 
@@ -122,8 +122,6 @@ class AnacWebScraper:
         :return: None
         """
         logger.info(f"Obtendo a lista de links dos arquivos...")
-        
-        filter_date = datetime.strptime(filter_date, '%Y-%m-%d').date()
         
         response = requests.get(url)
         if response.status_code == 200:
