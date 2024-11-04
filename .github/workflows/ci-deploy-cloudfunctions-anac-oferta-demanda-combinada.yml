@@ -1,4 +1,4 @@
-name: CF Anac Oferta Demanda Aerea CI/CD Deploy
+name: CF Anac Oferta Demanda Aerea Combinada CI/CD Deploy
 
 on:
   push:
