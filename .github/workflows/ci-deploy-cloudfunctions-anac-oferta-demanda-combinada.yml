@@ -1,0 +1,42 @@
+name: CF Anac Oferta Demanda Aerea CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "cloudfunctions/src/cf_extract_anac_oferta_demanda_aerea_combinada_to_bronze/**"
+      - ".github/workflows/ci-deploy-cloudfunctions-anac-oferta-demanda-combinada.yml"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK for Prod
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: 'latest'
+
+      # Instalar o componente alpha
+      - name: Install gcloud alpha components
+        run: |
+          gcloud components install alpha --quiet
+          
+      - name: Deploy to Cloud Functions
+        run: |
+          cd cloudfunctions/src/cf_extract_anac_oferta_demanda_aerea_combinada_to_bronze
+          chmod +x var.sh
+          . var.sh
+          sh deploy.sh

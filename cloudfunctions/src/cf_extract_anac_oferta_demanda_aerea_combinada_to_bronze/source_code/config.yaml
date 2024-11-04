@@ -1,0 +1,31 @@
+extract:
+  url: https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/microdados
+  source: anac
+  subdir_name: "oferta_demanda_aerea_combinada"
+  file_format_link: zip
+  file_format: txt
+  filter_file: combinada
+  start_date: "2024-01-01"
+
+bigquery:
+  dataset_id: tcc_bronze
+  table_id: anac_oferta_demanda_aerea_combinada
+  write_disposition: WRITE_APPEND
+  time_partitioning: month
+  partition_field: nr_ano_mes_referencia
+  schema_relax: True
+  description: |
+    Tabela para armazenar dados extraídos da ANAC sobre dados estatísticos de oferta e demanda aérea da etapa basica.
+
+    Os dados foram extraídos da página:
+      https://www.gov.br/anac/pt-br/assuntos/regulados/empresas-aereas/Instrucoes-para-a-elaboracao-e-apresentacao-das-demonstracoes-contabeis/envio-de-informacoes/microdados
+
+    A descrição das colunas podem ser encontradas no link:
+      https://www.gov.br/anac/pt-br/assuntos/dados-e-estatisticas/mercado-do-transporte-aereo/demanda-e-oferta/descricao-das-variaveis-microdados
+    
+  labels:
+    fonte: anac
+    sistema: anac
+    carga: incremental
+    frequencia: mensal
+    workload: cf_extract_anac_oferta_demanda_aerea_combinada_to_bronze
