@@ -18,7 +18,7 @@ LOCATION = os.getenv("LOCATION")
 
 # Cloudfunctions parameters
 URL_BASE_CF = os.getenv("URL_BASE_GCF")
-ENDPOINT = "cf_extract_anac_oferta_demanda_aerea_to_bronze"
+ENDPOINT = "cf_extract_anac_oferta_demanda_aerea_basica_to_bronze"
 URL_FULL = f"{URL_BASE_CF}/{ENDPOINT}"
 TOKEN_CF = fetch_id_token(Request(), URL_FULL)
 
@@ -87,7 +87,7 @@ def pipeline_anac():
         workflow_invocation={
             "compilation_result": "{{ task_instance.xcom_pull('df_compilation_repository')['name'] }}",
             "invocation_config": {
-                "included_targets": [{"database": PROJECT_ID, "name": "tb_anac_oferta_demanda_aerea", "schema": DATASET_SILVER}],
+                "included_targets": [{"database": PROJECT_ID, "name": "tb_anac_oferta_demanda_aerea_basica", "schema": DATASET_SILVER}],
                 "transitive_dependencies_included": False,
                 "transitive_dependents_included": False,
                 "fully_refresh_incremental_tables_enabled": False
@@ -101,17 +101,17 @@ def pipeline_anac():
         from soda.scan_operations import run_soda_scan
         return run_soda_scan(data_source, scan_name, checks_subpath)
     
-    # Cria a tabela gold analise_passageiros_voos
-    df_gold_passageiro = DataformCreateWorkflowInvocationOperator(
-        task_id="df_gold_analise_passageiro",
-        task_display_name="DF - Gold Analise Passageiro",
+    # Cria a tabela gold analise_trecho_detalhado_voo
+    df_gold_trecho_detalhado = DataformCreateWorkflowInvocationOperator(
+        task_id="df_gold_analise_trecho_detalhado_voo",
+        task_display_name="DF - Gold Analise Trecho Detalhado",
         project_id=PROJECT_ID,
         region=LOCATION,
         repository_id=DATAFORM_REPO_ID,
         workflow_invocation={
             "compilation_result": "{{ task_instance.xcom_pull('df_compilation_repository')['name'] }}",
             "invocation_config": {
-                "included_targets": [{"database": PROJECT_ID, "name": "analise_passageiros_voos", "schema": DATASET_GOLD}],
+                "included_targets": [{"database": PROJECT_ID, "name": "analise_trecho_detalhado_voo", "schema": DATASET_GOLD}],
                 "transitive_dependencies_included": False,
                 "transitive_dependents_included": False,
                 "fully_refresh_incremental_tables_enabled": False
@@ -119,17 +119,17 @@ def pipeline_anac():
         },
     )
     
-    # Cria a tabela gold analise_voos
-    df_gold_voos = DataformCreateWorkflowInvocationOperator(
-        task_id="df_gold_analise_voos",
-        task_display_name="DF - Gold Analise Voos",
+    # Cria a tabela gold analise_trecho_consolidado_voo
+    df_gold_trecho_consolidado = DataformCreateWorkflowInvocationOperator(
+        task_id="df_gold_analise_trecho_consolidado_voo",
+        task_display_name="DF - Gold Analise Trecho Consolidado",
         project_id=PROJECT_ID,
         region=LOCATION,
         repository_id=DATAFORM_REPO_ID,
         workflow_invocation={
             "compilation_result": "{{ task_instance.xcom_pull('df_compilation_repository')['name'] }}",
             "invocation_config": {
-                "included_targets": [{"database": PROJECT_ID, "name": "analise_voos", "schema": DATASET_GOLD}],
+                "included_targets": [{"database": PROJECT_ID, "name": "analise_trecho_consolidado_voo", "schema": DATASET_GOLD}],
                 "transitive_dependencies_included": False,
                 "transitive_dependents_included": False,
                 "fully_refresh_incremental_tables_enabled": False
@@ -147,7 +147,7 @@ def pipeline_anac():
           df_compilation_repo,
           df_transform_silver,
           soda_check_silver(),
-          [df_gold_passageiro,df_gold_voos],
+          [df_gold_trecho_detalhado, df_gold_trecho_consolidado],
           finish
     )
 

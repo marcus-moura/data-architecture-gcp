@@ -1,0 +1,103 @@
+checks for tb_anac_oferta_demanda_aerea_basica:
+    # Check fails when hash_key
+    # is missing, OR
+    # when the data type of those columns is other than specified
+    - schema:
+        fail:
+            when required column missing: [id_etapa_basica, nr_voo, ds_etapa, dt_voo, id_empresa]
+            when wrong column type:
+                id_etapa_basica: INTEGER
+                id_empresa: INTEGER
+                nr_voo: INTEGER
+                sigla_empresa: STRING
+                nm_empresa: STRING
+                nm_pais_origem_empresa: STRING
+                tipo_empresa: STRING
+                ds_etapa: STRING
+                grupo_voo: STRING
+                dt_voo: DATE
+                ano_mes_voo: DATE
+                dt_partida_real: DATETIME
+                dt_chegada_real: DATETIME
+                nr_linha: INTEGER
+                natureza_voo: STRING
+                ds_natureza_voo: STRING
+                ds_tipo_servico: STRING
+                natureza_etapa: STRING
+                sigla_aeroporto_origem: STRING
+                nm_aeroporto_origem: STRING
+                nm_municipio_origem: STRING
+                uf_origem: STRING
+                nm_pais_origem: STRING
+                sigla_aeroporto_destino: STRING
+                nm_aeroporto_destino: STRING
+                nm_municipio_destino: STRING
+                uf_destino: STRING
+                nm_pais_destino: STRING
+                nr_etapa: INTEGER
+                nr_escala_destino: INTEGER
+                nr_passag_pagos: INTEGER
+                nr_passag_gratis: INTEGER
+                nr_assentos_ofertados: INTEGER
+                nr_decolagem: INTEGER
+                lt_combustivel: FLOAT64
+                kg_payload: FLOAT64
+                kg_bagagem_livre: FLOAT64
+                kg_bagagem_excesso: FLOAT64
+                kg_carga_paga: FLOAT64
+                kg_carga_gratis: FLOAT64
+                kg_correio: FLOAT64
+                kg_peso: FLOAT64
+                nr_distancia_km: FLOAT64
+                nr_velocidade_media: FLOAT64
+                nr_horas_voadas: FLOAT64
+                nr_pax_gratis_km: FLOAT64
+                nr_carga_paga_km: FLOAT64
+                nr_carga_gratis_km: FLOAT64
+                nr_bagagem_paga_km: FLOAT64
+                nr_bagagem_gratis_km: FLOAT64
+                nr_correio_km: FLOAT64
+                nr_ask: FLOAT64
+                nr_rpk: FLOAT64
+                nr_atk: FLOAT64
+                nr_rtk: FLOAT64
+                data_ingestao: DATE
+                nome_arquivo: STRING
+
+    - duplicate_count(id_etapa_basica) = 0:
+        name: As linhas devem ser unicas
+    
+    - missing_count(nr_voo):
+        name: Número do voo não deve conter valores nulos
+        warn: when >= 1
+    
+    - missing_count(dt_voo):
+        name: data do voo não deve conter valores nulos
+        warn: when >= 1
+    
+    - missing_count(id_empresa):
+        name: Id da empresa não deve conter valores nulos
+        warn: when >= 1
+    
+    - missing_count(sigla_aeroporto_origem):
+        name: sigla_aeroporto_origem não deve conter valores nulos
+        warn: when >= 1
+    
+    - missing_count(sigla_aeroporto_destino):
+        name: sigla_aeroporto_destino não deve conter valores nulos
+        warn: when >= 1
+    
+    - invalid_count(nr_etapa) = 0:
+        name: Coluna nr_etapa deve ser maior ou igual a 1
+        valid min: 1
+
+    - invalid_count(grupo_voo) = 0:
+        name: Coluna grupo_voo só deve conter os valores - IMPRODUTIVO, NÃO REGULAR, REGULAR
+        valid values: [IMPRODUTIVO, NÃO REGULAR, REGULAR]
+    
+    - invalid_count(natureza_voo) = 0:
+        name: Coluna natureza_voo só deve conter os valores abaixo - INTERNACIONAL, DOMÉSTICA
+        valid values: [INTERNACIONAL, DOMÉSTICA]
+
+    - row_count > 0:
+        name: Total dever ser maior que 0
