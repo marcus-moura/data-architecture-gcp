@@ -15,6 +15,7 @@ airflow_config_overrides    = {
                             }
 pypi_packages               = {
                                 soda-core-bigquery = ""
+                                apache-airflow-providers-slack = ""
                             }
 environment_size            = "ENVIRONMENT_SIZE_SMALL"
 scheduler_config            = {
