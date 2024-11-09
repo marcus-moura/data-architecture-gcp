@@ -64,8 +64,6 @@ checks for tb_anac_oferta_demanda_aerea_basica:
                 data_ingestao: DATE
                 nome_arquivo: STRING
 
-    - duplicate_count(id_etapa_basica) = 0:
-        name: As linhas devem ser unicas
     
     - missing_count(nr_voo):
         name: Número do voo não deve conter valores nulos
@@ -91,12 +89,15 @@ checks for tb_anac_oferta_demanda_aerea_basica:
         name: Coluna nr_etapa deve ser maior ou igual a 1
         valid min: 1
 
+    - duplicate_count(id_etapa_basica) = 0:
+        name: As linhas devem ser unicas
+    
     - invalid_count(grupo_voo) = 0:
         name: Coluna grupo_voo só deve conter os valores - IMPRODUTIVO, NÃO REGULAR, REGULAR
         valid values: [IMPRODUTIVO, NÃO REGULAR, REGULAR]
     
     - invalid_count(natureza_voo) = 0:
-        name: Coluna natureza_voo só deve conter os valores abaixo - INTERNACIONAL, DOMÉSTICA
+        name: Coluna natureza_voo só deve conter os valores - INTERNACIONAL, DOMÉSTICA
         valid values: [INTERNACIONAL, DOMÉSTICA]
 
     - row_count > 0:

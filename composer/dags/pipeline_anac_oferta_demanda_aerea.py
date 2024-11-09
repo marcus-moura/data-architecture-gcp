@@ -9,6 +9,7 @@ from airflow.providers.http.operators.http import HttpOperator
 from google.auth.transport.requests import Request
 from google.oauth2.id_token import fetch_id_token
 from airflow.operators.empty import EmptyOperator
+from alert.slack import send_fail_alert_slack
 from airflow.utils.timezone import pendulum
 from datetime import timedelta
 import os
@@ -31,8 +32,9 @@ default_args = {
     'owner': "Marcus/Rachel",
     'depends_on_past': False,
     'start_date': pendulum.today("America/Sao_Paulo").add(days=-1),
-    'retries': 2,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5),
+    'on_failure_callback': send_fail_alert_slack
 }
 
 @dag(
@@ -61,7 +63,7 @@ def pipeline_anac():
     
     # Inicia um ambiente virtual Python e executa a checagem de qualidade na tabela bronze
     @task(task_display_name="Soda Check Bronze")
-    def soda_check_bronze(data_source='bigquery_soda_bronze', checks_subpath='bronze', scan_name='anac_oferta_demanda_aerea'): 
+    def soda_check_bronze(data_source='bigquery_soda_bronze', checks_subpath='bronze', scan_name='anac_oferta_demanda_aerea_basica'): 
         from soda.scan_operations import run_soda_scan
         return run_soda_scan(data_source, scan_name, checks_subpath)
     
@@ -97,7 +99,7 @@ def pipeline_anac():
     
     # Inicia um ambiente virtual Python e executa a checagem de qualidade na tabela silver
     @task(task_display_name="Soda Check Silver")
-    def soda_check_silver(data_source='bigquery_soda_silver', checks_subpath='silver', scan_name='tb_anac_oferta_demanda_aerea'): 
+    def soda_check_silver(data_source='bigquery_soda_silver', checks_subpath='silver', scan_name='tb_anac_oferta_demanda_aerea_basica'): 
         from soda.scan_operations import run_soda_scan
         return run_soda_scan(data_source, scan_name, checks_subpath)
     

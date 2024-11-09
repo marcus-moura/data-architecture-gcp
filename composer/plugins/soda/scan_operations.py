@@ -7,9 +7,10 @@ def run_soda_scan(data_source, scan_name, checks_subpath = None):
     base_path = os.path.join(os.getcwd(), "gcs", "plugins", "soda")
     config_file = f"{base_path}/configuration.yml"
     checks_path = f"{base_path}/checks"
-
     if checks_subpath:
         checks_path += f"/{checks_subpath}"
+    
+    file_scan_path = f"{checks_path}/{scan_name}.yaml"
     
     log.info("-------------------------- Starting Soda Scan --------------------------")
     log.info(f"Data Source: {data_source}")
@@ -19,7 +20,7 @@ def run_soda_scan(data_source, scan_name, checks_subpath = None):
     scan.set_verbose()
     scan.add_configuration_yaml_file(config_file)
     scan.set_data_source_name(data_source)
-    scan.add_sodacl_yaml_files(checks_path)
+    scan.add_sodacl_yaml_files(file_scan_path)
     scan.set_scan_definition_name(scan_name)
 
     result = scan.execute()
