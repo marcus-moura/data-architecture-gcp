@@ -134,3 +134,13 @@ checks for anac_oferta_demanda_aerea_basica:
         valid regex: ^\d{2}:\d{2}:\d{2}$
         name: hr_partida_real deve corresponder ao padrão HH:mm:ss.
         fail: when > 0
+    
+    - invalid_count(dt_chegada_real):
+        valid regex: ^\d{4}-\d{2}-\d{2}$
+        name: dt_chegada_real deve corresponder ao padrão YYYY-MM-DD.
+        fail: when > 0
+    
+    - invalid_count(hr_chegada_real):
+        valid regex: ^\d{2}:\d{2}:\d{2}$
+        name: hr_chegada_real deve corresponder ao padrão HH:mm:ss.
+        fail: when > 0
