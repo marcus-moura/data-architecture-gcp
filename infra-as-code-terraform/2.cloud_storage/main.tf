@@ -7,6 +7,7 @@ provider "google" {
 locals {
   bucket_name_landing = "tcc-landing"
   bucket_name_composer = "tcc-composer"
+  bucket_name_teste = "tcc-teste"
 }
 
 module "gcs_buckets" {
@@ -20,6 +21,7 @@ module "gcs_buckets" {
   names          = [
       local.bucket_name_landing,
       local.bucket_name_composer,
+      local.bucket_name_teste
   ]
   # pastas criadas dentro do bucket especifico
   folders = {
