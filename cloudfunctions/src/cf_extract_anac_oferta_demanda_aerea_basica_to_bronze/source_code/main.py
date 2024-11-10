@@ -26,10 +26,6 @@ def main(request=None):
     bucket_name = os.getenv("BUCKET_LANDING")
     location = os.getenv("LOCATION")
     
-    project_id="data-architecture-tcc"
-    location="us-east4"
-    bucket_name = "bkt-tcc-landing"
-    
     # Load configuration from YAML file
     config = load_yaml("config.yaml")
     extract_config = config["extract"]
