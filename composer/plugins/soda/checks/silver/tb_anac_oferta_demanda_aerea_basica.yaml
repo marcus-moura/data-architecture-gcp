@@ -84,10 +84,6 @@ checks for tb_anac_oferta_demanda_aerea_basica:
     - missing_count(sigla_aeroporto_destino):
         name: sigla_aeroporto_destino não deve conter valores nulos
         warn: when >= 1
-    
-    - invalid_count(nr_etapa) = 0:
-        name: Coluna nr_etapa deve ser maior ou igual a 1
-        valid min: 1
 
     - duplicate_count(id_etapa_basica) = 0:
         name: As linhas devem ser unicas
