@@ -1,7 +1,7 @@
 # Variaveis para criação do composer do ambiente de dev
 project_id                  = "data-architecture-tcc"
 location                    = "us-east4"
-image_version_composer      = "composer-2.8.6-airflow-2.9.1"
+image_version_composer      = "composer-2.9.11-airflow-2.10.2"
 composer_name               = "tcc-composer"
 sa_composer_name            = "sa-composer"
 bucket_name_composer        = "bkt-tcc-composer"

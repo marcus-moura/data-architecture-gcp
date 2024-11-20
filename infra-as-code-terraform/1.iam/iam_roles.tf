@@ -12,9 +12,9 @@ resource "google_project_iam_member" "attach_roles_sa_cloudfunctions" {
 
 # Attach role in service account composer
 resource "google_project_iam_member" "attach_roles_sa_composer" {
-  for_each = toset(["roles/run.invoker","roles/composer.worker",
-                    "roles/bigquery.jobUser", "roles/bigquery.dataEditor", 
-                    "roles/iam.serviceAccountUser","roles/dataform.editor"])
+  for_each = toset(["roles/run.invoker", "roles/composer.worker", "roles/secretmanager.secretAccessor",
+                    "roles/bigquery.jobUser", "roles/bigquery.dataEditor", "roles/iam.serviceAccountUser",
+                    "roles/dataform.editor"])
   project = var.project_id
   role  = each.key
   member  = "serviceAccount:${local.sa_prefix}-${local.sa_composer}@${var.project_id}.iam.gserviceaccount.com"
