@@ -95,4 +95,3 @@ def main(request=None):
         logger.success(f"Arquivo {blob.name} movido com sucesso!")
         
     return "Ingestão concluída com sucesso!!"
-main()

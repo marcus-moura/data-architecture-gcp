@@ -5,7 +5,7 @@ extract:
   file_format_link: zip
   file_format: txt
   filter_file: basica
-  start_date: "2019-01-01"
+  start_date: "2022-01-01"
 
 bigquery:
   dataset_id: tcc_bronze
